@@ -1,6 +1,8 @@
 const Item = require("../models/Item");
+const User = require("../models/User");
 const { removeImageFile } = require("../utils/files");
 const { notifyUser } = require("../utils/notify");
+const { sendMatchAlertEmail } = require("../utils/email");
 
 const isOwnerOrAdmin = (item, user) =>
   item.reportedBy.toString() === user.id || user.role === "admin";
@@ -15,18 +17,26 @@ const notifyPossibleMatches = async (app, item, reporterId) => {
     reportedBy: { $ne: reporterId },
   })
     .limit(10)
-    .select("reportedBy title");
+    .populate("reportedBy", "name email");
 
   const seen = new Set();
   for (const m of matches) {
-    const owner = m.reportedBy.toString();
-    if (seen.has(owner)) continue;
-    seen.add(owner);
-    await notifyUser(app, owner, {
+    if (!m.reportedBy) continue;
+    const ownerId = m.reportedBy._id ? m.reportedBy._id.toString() : m.reportedBy.toString();
+    if (seen.has(ownerId)) continue;
+    seen.add(ownerId);
+
+    await notifyUser(app, ownerId, {
       type: "possible_match",
       message: `A ${item.type} item "${item.title}" (${item.category}) was reported. It may match your report "${m.title}".`,
       item: item._id,
     });
+
+    if (m.reportedBy.email) {
+      sendMatchAlertEmail(m.reportedBy, item).catch((e) =>
+        console.error("Match email alert failed:", e.message)
+      );
+    }
   }
 };
 

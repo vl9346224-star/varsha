@@ -30,12 +30,21 @@ export function AuthProvider({ children }) {
       .finally(() => setLoading(false));
   }, [logout]);
 
-  const login = async (creds) => { const { token, user } = await authService.login(creds); persist(token, user); };
-  const register = async (data) => { const { token, user } = await authService.register(data); persist(token, user); };
+  const login = async (creds) => {
+    const { token, user } = await authService.login(creds);
+    persist(token, user);
+    return user;
+  };
+  const register = async (data) => {
+    const { token, user } = await authService.register(data);
+    persist(token, user);
+    return user;
+  };
   const updateProfile = async (data) => {
     const u = await authService.updateProfile(data);
     localStorage.setItem("user", JSON.stringify(u));
     setUser(u);
+    return u;
   };
 
   return (

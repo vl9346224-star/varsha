@@ -32,6 +32,7 @@ app.use("/api/items", require("./routes/itemRoutes"));
 app.use("/api/search", require("./routes/searchRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/notifications", require("./routes/notificationRoutes"));
+app.use("/api/claims", require("./routes/claimRoutes"));
 
 // Unknown /api route
 app.use("/api", (req, res) => res.status(404).json({ message: "Route not found" }));

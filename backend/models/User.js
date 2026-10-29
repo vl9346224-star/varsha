@@ -9,6 +9,8 @@ const userSchema = new mongoose.Schema(
     role: { type: String, enum: ["student", "admin"], default: "student" },
     rollNumber: { type: String, trim: true },
     phone: { type: String, trim: true },
+    department: { type: String, trim: true },
+    section: { type: String, trim: true },
   },
   { timestamps: true }
 );

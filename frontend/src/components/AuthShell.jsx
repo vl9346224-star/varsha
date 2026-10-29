@@ -9,7 +9,7 @@ export default function AuthShell({ title, subtitle, children, footer }) {
       <section className="tag">
         <div className="tag-hole" aria-hidden="true" />
         <h2>{title}</h2>
-        <p className="muted">{subtitle}</p>
+        {subtitle ? <p className="muted">{subtitle}</p> : null}
         {children}
         <p className="tag-foot">{footer}</p>
       </section>
